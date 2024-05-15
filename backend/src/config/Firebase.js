@@ -1,4 +1,25 @@
-const firebase = require('firebase/app');
+const admin = require('firebase-admin');
+const fs = require('fs');
+
+// Configuración de las credenciales de Firebase Admin
+const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath));
+
+// Inicializar Firebase Admin
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+// Obtener una instancia de Firestore
+const db = admin.firestore();
+
+// Exportar el objeto admin y la instancia de Firestore para su uso en otros archivos
+module.exports = { admin, db };
+
+
+
+
+/*const firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/firestore');
 const admin = require('firebase-admin');
@@ -25,4 +46,4 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-module.exports = { auth, db, admin };
+module.exports = { auth, db, admin };*/
