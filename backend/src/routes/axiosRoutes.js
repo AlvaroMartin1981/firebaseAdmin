@@ -1,8 +1,8 @@
-/*const express = require('express');
-const router = express.Router();
+const express = require('express');
+const routerAxios = express.Router();
 const getPokemon = require('../utils/getPokemon')
 
-router.get('/cards', async (req, res) => {
+routerAxios.get('/cards', async (req, res) => {
     try {
         await getPokemon.fetchAndSavePokemonCards();
         res.status(200).send('Tarjetas de Pokémon guardadas exitosamente en Firestore.');
@@ -12,7 +12,7 @@ router.get('/cards', async (req, res) => {
     }
 });
 
-router.get('/sets', async (req, res) => {
+routerAxios.get('/sets', async (req, res) => {
     try {
         await getPokemon.fetchAndSaveSetDetails();
         res.status(200).send('Detalles de los sets de Pokémon guardados exitosamente en Firestore.');
@@ -22,7 +22,7 @@ router.get('/sets', async (req, res) => {
     }
 });
 
-router.get('/types', async (req, res) => {
+routerAxios.get('/types', async (req, res) => {
     try {
         const types = await getPokemon.getAllTypes();
         res.status(200).json({ data: types });
@@ -32,7 +32,7 @@ router.get('/types', async (req, res) => {
     }
 });
 
-router.get('/subtypes', async (req, res) => {
+routerAxios.get('/subtypes', async (req, res) => {
     try {
         const subtypes = await getPokemon.getAllSubtypes();
         res.status(200).json({ data: subtypes });
@@ -42,7 +42,7 @@ router.get('/subtypes', async (req, res) => {
     }
 });
 
-router.get('/supertypes', async (req, res) => {
+routerAxios.get('/supertypes', async (req, res) => {
     try {
         const supertypes = await getPokemon.getAllSuperTypes();
         res.status(200).json({ data: supertypes });
@@ -52,7 +52,7 @@ router.get('/supertypes', async (req, res) => {
     }
 });
 
-router.get('/rarities', async (req, res) => {
+routerAxios.get('/rarities', async (req, res) => {
     try {
         const rarities = await getPokemon.getAllRarities();
         res.status(200).json({ data: rarities });
@@ -62,4 +62,4 @@ router.get('/rarities', async (req, res) => {
     }
 });
 
-module.exports = router;*/
+module.exports = routerAxios;
