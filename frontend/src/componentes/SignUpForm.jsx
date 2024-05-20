@@ -1,32 +1,37 @@
 import React, { useState } from 'react';
-import { auth, firestore } from '../config/Firebase';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
         e.preventDefault();
 
         try {
-            // Crear un nuevo usuario con correo electrónico y contraseña
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-
-            // Guardar el nombre del usuario en Firestore
-            await firestore.collection('users').doc(user.uid).set({
-                name: name
+            const response = await fetch('http://localhost:8080/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password }),
             });
 
-            // Redireccionar al usuario a la página de inicio después de registrarse
-            window.location.href = '/home';
+            if (!response.ok) {
+                throw new Error('Failed to sign up');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // Guardamos el token en el localStorage
+            navigate('/home');
         } catch (error) {
             setError(error.message);
             console.error('Error:', error.message);
         }
-    }
+    };
 
     return (
         <div className="sign-up-form">
@@ -49,9 +54,9 @@ const SignUpForm = () => {
                     <button type="submit">Sign up</button>
                 </div>
             </form>
-            <button onClick={() => window.location.href = '/'}>Go Home</button>
+            <button onClick={() => navigate('/')}>Go Home</button>
         </div>
     );
-}
+};
 
 export default SignUpForm;

@@ -1,7 +1,7 @@
-const firebaseapp = require('../config/firebaseindex')
+const firebaseapp = require('../config/firebaseindex');
 
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } = require('firebase/auth');
-const { getFirestore, collection, doc, setDoc, getDoc, Timestamp } = require('firebase/firestore');
+const { getFirestore, doc, setDoc, getDoc, Timestamp } = require('firebase/firestore');
 
 const auth = getAuth(firebaseapp);
 const fireDb = getFirestore(firebaseapp);
@@ -11,7 +11,7 @@ const userController = {
     const { email, password, role, name, username } = req.body;
     try {
       console.log('Registrando usuario...');
-      
+
       // Validar los datos proporcionados
       if (!email || !password || !role || !name || !username) {
         console.log('Falta algún campo.');
@@ -21,7 +21,7 @@ const userController = {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       const userRef = doc(fireDb, 'usuarios', uid);
-      
+
       await setDoc(userRef, {
         uid,
         name,
@@ -33,12 +33,10 @@ const userController = {
       });
 
       const loginCredential = await signInWithEmailAndPassword(auth, email, password);
-      req.session.uid = uid;
-      req.session.token = await loginCredential.user.getIdToken();
-      req.session.role = role;
-
+      const token = await loginCredential.user.getIdToken();
+      
       console.log('Usuario registrado exitosamente.');
-      res.status(201).json({ uid, token: req.session.token, role });
+      res.status(201).json({ uid, token, role });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       let errorMessage = "Error al registrar usuario";
@@ -54,7 +52,7 @@ const userController = {
   async login(req, res) {
     try {
       console.log('Iniciando sesión...');
-      
+
       const { email, password } = req.body;
 
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -62,9 +60,6 @@ const userController = {
 
       const userDoc = await getDoc(doc(fireDb, 'usuarios', uid));
       const userData = userDoc.data();
-
-      req.session.uid = uid;
-      req.session.role = userData.role;
 
       console.log('Inicio de sesión exitoso.');
       res.status(200).json({ message: "Inicio de sesión exitoso", user: userData });
@@ -77,12 +72,9 @@ const userController = {
   async logout(req, res) {
     try {
       console.log('Cerrando sesión...');
-      
+
       // Cerrar sesión de usuario en Firebase Authentication
       await signOut(auth);
-
-      // Limpiar la sesión del usuario en el backend
-      req.session = null;
 
       console.log('Cierre de sesión exitoso.');
       res.status(200).json({ message: "Cierre de sesión exitoso" });

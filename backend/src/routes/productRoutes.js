@@ -1,7 +1,7 @@
 const express = require('express');
 const routerProducts = express.Router();
 const productController = require('../controllers/productController');
-
+const authMiddleware = require('../middleware/authMiddleware');
 
 
 
@@ -15,10 +15,10 @@ routerProducts.get('/cards/name/:name', productController.getCardName);
 routerProducts.get('/sets/name/:setName', productController.getSetName);
 
 // Rutas solo para admin y superadmin
-routerProducts.put('/editProduct/:productId', productController.editProduct);
+routerProducts.put('/editProduct/:productId', authMiddleware, productController.editProduct);
 
 // Rutas solo para superadmin
-routerProducts.post('/createProduct', productController.createProduct);
-routerProducts.delete('/deleteProduct/:productId', productController.deleteProduct);
+routerProducts.post('/createProduct', authMiddleware, productController.createProduct);
+routerProducts.delete('/deleteProduct/:productId', authMiddleware, productController.deleteProduct);
 
 module.exports = routerProducts;

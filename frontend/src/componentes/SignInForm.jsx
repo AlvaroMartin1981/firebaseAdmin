@@ -1,23 +1,36 @@
 import React, { useState } from 'react';
-import { auth } from '../config/Firebase';
+import { useNavigate } from 'react-router-dom';
 
 const SignInForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-        
+
         try {
-            await auth.signInWithEmailAndPassword(email, password);
-            // Redireccionar al usuario a la página de inicio si el inicio de sesión es exitoso
-            window.location.href = '/home';
+            const response = await fetch('http://localhost:8080/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to sign in');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // Guardamos el token en el localStorage
+            navigate('/home');
         } catch (error) {
             setError(error.message);
             console.error('Error:', error.message);
         }
-    }
+    };
 
     return (
         <div className="sign-in-form">
@@ -33,13 +46,12 @@ const SignInForm = () => {
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <div>
-                    <button type="submit">Login</button>
+                    <button type="submit">Sign in</button>
                 </div>
             </form>
-            <p>¿No estás registrado? <a href="/signup">Sign up</a></p>
-            <button onClick={() => window.location.href = '/'}>Go Home</button>
+            <button onClick={() => navigate('/')}>Go Home</button>
         </div>
     );
-}
+};
 
 export default SignInForm;

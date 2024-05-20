@@ -1,15 +1,19 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-function Routes() {
+function RoutesApp() {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:productId" element={<Product />} />
-                <Route path="/products/new" element={<NewProduct />} />
-                <Route path="/products/:productId/edit" element={<EditProduct />} />
+                <Route path="/cards" element={<Products />} />
+                <Route path="/cards/:cardsId" element={<Product />} />
+                <Route path="/sets" element={<Products />} />
+                <Route path="/sets/:setId" element={<Product />} />
+                <Route path="/cards/name/:name" element={<Product />} />
+                
             </Routes>
         </Router>
     )
-}
+};
+
+export default RoutesApp
